@@ -28,31 +28,58 @@ const formSchema = z.object({
 });
 
 function renderExplanation(text: string) {
-  const inlineMathRegex = /\$(.*?)\$/g;
-  const blockMathRegex = /\$\$\n(.*?)\n\$\$/gs;
+  // Replace markdown bold with html strong
+  const boldedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+  // Split text by newlines to handle paragraphs and lists
+  const lines = boldedText.split('\n');
 
-  const parts = text.split(blockMathRegex);
+  const content = lines.map((line, index) => {
+    // Handle list items
+    if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
+      line = line.replace(/[-*] /g, '');
+    }
+    
+    // Process math equations
+    const inlineMathRegex = /\$(.*?)\$/g;
+    const blockMathRegex = /\$\$\n(.*?)\n\$\$/gs;
 
-  return parts.map((part, index) => {
-    if (index % 2 === 1) {
-      // This is a block math part
-      return <BlockMath key={index} math={part} />;
-    } else {
-      // This is a regular text part, which might contain inline math
-      const inlineParts = part.split(inlineMathRegex);
+    // First, handle block math which are standalone
+    const blockParts = line.split(blockMathRegex);
+    if (blockParts.length > 1) {
       return (
-        <p key={index}>
-          {inlineParts.map((inlinePart, inlineIndex) => {
-            if (inlineIndex % 2 === 1) {
-              return <InlineMath key={inlineIndex} math={inlinePart} />;
-            } else {
-              return <span key={inlineIndex}>{inlinePart}</span>;
+        <div key={index}>
+          {blockParts.map((part, partIndex) => {
+            if (partIndex % 2 === 1) {
+              return <BlockMath key={partIndex} math={part} />;
             }
+            return <span key={partIndex}>{part}</span>;
           })}
-        </p>
+        </div>
       );
     }
+    
+    // Then handle inline math
+    const inlineParts = line.split(inlineMathRegex);
+    const renderedLine = inlineParts.map((part, partIndex) => {
+      if (partIndex % 2 === 1) {
+        return <InlineMath key={partIndex} math={part} />;
+      }
+      return <span key={partIndex} dangerouslySetInnerHTML={{ __html: part }} />;
+    });
+
+    if (line.trim().length === 0) {
+      return <div key={index} className="h-4" />; // Spacer for empty lines
+    }
+
+    if (line.startsWith('* ') || line.startsWith('- ')) {
+        return <li key={index}>{renderedLine}</li>;
+    }
+
+    return <p key={index}>{renderedLine}</p>;
   });
+
+  return <>{content}</>;
 }
 
 export function TopicExplainer() {
@@ -115,7 +142,7 @@ export function TopicExplainer() {
 
       {explanation && (
         <ResultCard title="Explanation" textToCopy={explanation}>
-          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline">
+          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline prose-strong:font-bold">
             {renderExplanation(explanation)}
           </div>
         </ResultCard>

@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -5,7 +6,7 @@
  *
  * - explainTopic - A function that handles the topic explanation process.
  * - ExplainTopicInput - The input type for the explainTopic function.
- * - ExplainTopicOutput - The return type for the explainTopic function.
+ * - ExplainTopicOutput - The return type for the explainTopicOutput function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -17,7 +18,7 @@ const ExplainTopicInputSchema = z.object({
 export type ExplainTopicInput = z.infer<typeof ExplainTopicInputSchema>;
 
 const ExplainTopicOutputSchema = z.object({
-  explanation: z.string().describe('A clear and simple explanation of the topic with examples.'),
+  explanation: z.string().describe('A clear and simple explanation of the topic with examples, formatted in Markdown.'),
 });
 export type ExplainTopicOutput = z.infer<typeof ExplainTopicOutputSchema>;
 
@@ -32,6 +33,8 @@ const prompt = ai.definePrompt({
   prompt: `You are an expert tutor, skilled at explaining complex topics in simple terms.
 
   Explain the following topic in a way that a student can easily understand it. Include examples to illustrate the concept.
+
+  Format your response using Markdown, including headings, bold text for key terms, and lists for key ideas. Use LaTeX for any mathematical equations, using $...$ for inline math and $$...$$ for block math.
 
   Topic: {{{topic}}}`,
 });
