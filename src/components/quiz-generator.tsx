@@ -33,6 +33,7 @@ export function QuizGenerator() {
     null
   );
   const [isLoading, setIsLoading] = React.useState(false);
+  const [startTime, setStartTime] = React.useState<number | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,6 +48,7 @@ export function QuizGenerator() {
     try {
       const result = await generateQuiz({text: values.text});
       setQuizData(result);
+      setStartTime(Date.now());
     } catch (error) {
       console.error('Error generating quiz:', error);
       // TODO: Add error toast
@@ -100,12 +102,12 @@ export function QuizGenerator() {
 
       {isLoading && <LoadingSpinner />}
 
-      {quizData && (
+      {quizData && startTime && (
         <ResultCard
           title="Your Quiz"
           textToCopy={quizTextForClipboard}
         >
-          <QuizDisplay quizData={quizData} />
+          <QuizDisplay quizData={quizData} startTime={startTime} />
         </ResultCard>
       )}
     </div>

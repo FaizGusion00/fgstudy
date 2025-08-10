@@ -39,7 +39,7 @@ const prompt = ai.definePrompt({
   name: 'generateQuizPrompt',
   input: {schema: GenerateQuizInputSchema},
   output: {schema: GenerateQuizOutputSchema},
-  prompt: `You are an expert educator creating a multiple-choice quiz based on the provided text.  The quiz should consist of 5 questions.
+  prompt: `You are an expert educator creating a multiple-choice quiz based on the provided text.  The quiz should consist of 15 questions.
 
   The output should be a JSON array of question objects, where each object has the following structure:
   {
