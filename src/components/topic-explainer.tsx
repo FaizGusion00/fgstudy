@@ -19,12 +19,41 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import {Input} from '@/components/ui/input';
+import {BlockMath, InlineMath} from 'react-katex';
 
 const formSchema = z.object({
   topic: z.string().min(3, {
     message: 'Please enter a topic.',
   }),
 });
+
+function renderExplanation(text: string) {
+  const inlineMathRegex = /\$(.*?)\$/g;
+  const blockMathRegex = /\$\$\n(.*?)\n\$\$/gs;
+
+  const parts = text.split(blockMathRegex);
+
+  return parts.map((part, index) => {
+    if (index % 2 === 1) {
+      // This is a block math part
+      return <BlockMath key={index} math={part} />;
+    } else {
+      // This is a regular text part, which might contain inline math
+      const inlineParts = part.split(inlineMathRegex);
+      return (
+        <p key={index}>
+          {inlineParts.map((inlinePart, inlineIndex) => {
+            if (inlineIndex % 2 === 1) {
+              return <InlineMath key={inlineIndex} math={inlinePart} />;
+            } else {
+              return <span key={inlineIndex}>{inlinePart}</span>;
+            }
+          })}
+        </p>
+      );
+    }
+  });
+}
 
 export function TopicExplainer() {
   const [explanation, setExplanation] = React.useState('');
@@ -86,10 +115,8 @@ export function TopicExplainer() {
 
       {explanation && (
         <ResultCard title="Explanation" textToCopy={explanation}>
-          <div className="prose prose-sm max-w-none text-foreground prose-p:my-2 prose-headings:font-headline">
-            {explanation.split('\n\n').map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
+          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline">
+            {renderExplanation(explanation)}
           </div>
         </ResultCard>
       )}

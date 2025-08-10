@@ -19,7 +19,7 @@ export default function Home() {
         <Header />
         <main className="pb-12">
           <Tabs defaultValue="summarize" className="w-full max-w-3xl mx-auto">
-            <TabsList className="grid w-full grid-cols-3 bg-primary/20 p-1 h-auto">
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 bg-primary/20 p-1 h-auto">
               <TabsTrigger value="summarize" className="py-2">
                 <BookText className="mr-2 size-4" /> Summarize
               </TabsTrigger>
