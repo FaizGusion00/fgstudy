@@ -1,5 +1,4 @@
-import {Logo} from '@/components/logo';
-import {ThemeToggle} from '@/components/theme-toggle';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function Header() {
   return (
@@ -7,7 +6,9 @@ export function Header() {
       <div className="absolute top-8 right-0">
         <ThemeToggle />
       </div>
-      <Logo />
+      <div className="flex items-center justify-center size-14 bg-primary rounded-lg text-primary-foreground shadow-md">
+        <span className="font-headline text-2xl font-bold">FGS</span>
+      </div>
       <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
         FGStudy AI
       </h1>
