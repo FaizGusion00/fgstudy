@@ -29,7 +29,9 @@ const prompt = ai.definePrompt({
   name: 'summarizeNotePrompt',
   input: {schema: SummarizeNoteInputSchema},
   output: {schema: SummarizeNoteOutputSchema},
-  prompt: `You are an expert note summarizer. You will take lecture notes as input and return a concise summary in bullet points.\n\nNotes: {{{notes}}}`,
+  prompt: `You are an expert note summarizer. You will take lecture notes as input and return a concise summary in bullet points. Please respond in the same language as the input notes.
+
+Notes: {{{notes}}}`,
 });
 
 const summarizeNoteFlow = ai.defineFlow(

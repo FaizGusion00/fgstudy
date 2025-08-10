@@ -30,7 +30,7 @@ const prompt = ai.definePrompt({
   name: 'explainTopicPrompt',
   input: {schema: ExplainTopicInputSchema},
   output: {schema: ExplainTopicOutputSchema},
-  prompt: `You are an expert tutor, skilled at explaining complex topics in simple terms.
+  prompt: `You are an expert tutor, skilled at explaining complex topics in simple terms. Please respond in the same language as the input topic.
 
   Explain the following topic in a way that a student can easily understand it. Include examples to illustrate the concept.
 
