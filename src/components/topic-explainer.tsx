@@ -8,6 +8,7 @@ import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import ReactMarkdown from 'react-markdown';
 import {BlockMath, InlineMath} from 'react-katex';
+import remarkGfm from 'remark-gfm';
 
 import {explainTopic} from '@/ai/flows/topic-explainer';
 import {LoadingSpinner} from '@/components/loading-spinner';
@@ -39,6 +40,7 @@ const formSchema = z.object({
 function MarkdownRenderer({text}: {text: string}) {
   return (
     <ReactMarkdown
+      remarkPlugins={[remarkGfm]}
       components={{
         p: ({node, ...props}) => (
           <p className="my-2 leading-relaxed" {...props} />
