@@ -6,6 +6,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {Wand2} from 'lucide-react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
+import ReactMarkdown from 'react-markdown';
 
 import {summarizeNote} from '@/ai/flows/note-summarizer';
 import {LoadingSpinner} from '@/components/loading-spinner';
@@ -86,14 +87,9 @@ export function NoteSummarizer() {
 
       {summary && (
         <ResultCard title="Summary" textToCopy={summary}>
-          <ul className="list-disc space-y-2 pl-5 text-sm text-foreground">
-            {summary
-              .split('\n')
-              .filter(line => line.trim().length > 0)
-              .map((line, index) => (
-                <li key={index}>{line.replace(/[-*] /g, '')}</li>
-              ))}
-          </ul>
+          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline prose-strong:font-bold prose-ul:list-disc prose-ul:pl-5">
+            <ReactMarkdown>{summary}</ReactMarkdown>
+          </div>
         </ResultCard>
       )}
     </div>

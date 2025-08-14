@@ -6,6 +6,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {Wand2} from 'lucide-react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
+import ReactMarkdown from 'react-markdown';
+import {BlockMath, InlineMath} from 'react-katex';
 
 import {explainTopic} from '@/ai/flows/topic-explainer';
 import {LoadingSpinner} from '@/components/loading-spinner';
@@ -19,7 +21,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import {Input} from '@/components/ui/input';
-import {BlockMath, InlineMath} from 'react-katex';
 
 const formSchema = z.object({
   topic: z.string().min(3, {
@@ -28,59 +29,42 @@ const formSchema = z.object({
 });
 
 function renderExplanation(text: string) {
-  // Replace markdown bold with html strong
-  const boldedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  
-  // Split text by newlines to handle paragraphs and lists
-  const lines = boldedText.split('\n');
+  return (
+    <ReactMarkdown
+      components={{
+        p: ({node, ...props}) => <p className="my-2" {...props} />,
+        strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
+        h1: ({node, ...props}) => <h1 className="font-headline text-2xl" {...props} />,
+        h2: ({node, ...props}) => <h2 className="font-headline text-xl" {...props} />,
+        h3: ({node, ...props}) => <h3 className="font-headline text-lg" {...props} />,
+        ul: ({node, ...props}) => <ul className="list-disc pl-5" {...props} />,
+        ol: ({node, ...props}) => <ol className="list-decimal pl-5" {...props} />,
+        li: ({node, ...props}) => <li className="my-1" {...props} />,
+        code(props) {
+          const { children, className, node, ...rest } = props
+          const match = /language-(\w+)/.exec(className || '')
+          if (typeof children !== 'string') return null;
 
-  const content = lines.map((line, index) => {
-    // Handle list items
-    if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
-      line = line.replace(/[-*] /g, '');
-    }
-    
-    // Process math equations
-    const inlineMathRegex = /\$(.*?)\$/g;
-    const blockMathRegex = /\$\$\n(.*?)\n\$\$/gs;
+          if (children.startsWith('$') && children.endsWith('$')) {
+             if (children.startsWith('$$') && children.endsWith('$$')) {
+                return <BlockMath math={children.slice(2, -2)} />
+             }
+             return <InlineMath math={children.slice(1,-1)} />
+          }
 
-    // First, handle block math which are standalone
-    const blockParts = line.split(blockMathRegex);
-    if (blockParts.length > 1) {
-      return (
-        <div key={index}>
-          {blockParts.map((part, partIndex) => {
-            if (partIndex % 2 === 1) {
-              return <BlockMath key={partIndex} math={part} />;
-            }
-            return <span key={partIndex}>{part}</span>;
-          })}
-        </div>
-      );
-    }
-    
-    // Then handle inline math
-    const inlineParts = line.split(inlineMathRegex);
-    const renderedLine = inlineParts.map((part, partIndex) => {
-      if (partIndex % 2 === 1) {
-        return <InlineMath key={partIndex} math={part} />;
-      }
-      return <span key={partIndex} dangerouslySetInnerHTML={{ __html: part }} />;
-    });
-
-    if (line.trim().length === 0) {
-      return <div key={index} className="h-4" />; // Spacer for empty lines
-    }
-
-    if (line.startsWith('* ') || line.startsWith('- ')) {
-        return <li key={index}>{renderedLine}</li>;
-    }
-
-    return <p key={index}>{renderedLine}</p>;
-  });
-
-  return <>{content}</>;
+          return (
+            <code {...rest} className={className}>
+              {children}
+            </code>
+          )
+        }
+      }}
+    >
+      {text}
+    </ReactMarkdown>
+  );
 }
+
 
 export function TopicExplainer() {
   const [explanation, setExplanation] = React.useState('');
@@ -142,7 +126,7 @@ export function TopicExplainer() {
 
       {explanation && (
         <ResultCard title="Explanation" textToCopy={explanation}>
-          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline prose-strong:font-bold">
+          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground">
             {renderExplanation(explanation)}
           </div>
         </ResultCard>
