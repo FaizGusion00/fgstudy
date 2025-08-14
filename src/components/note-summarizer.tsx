@@ -88,7 +88,14 @@ export function NoteSummarizer() {
       {summary && (
         <ResultCard title="Summary" textToCopy={summary}>
           <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline prose-strong:font-bold prose-ul:list-disc prose-ul:pl-5">
-            <ReactMarkdown>{summary}</ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                p: ({node, ...props}) => <p className="my-2 leading-relaxed" {...props} />,
+                strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
+                ul: ({node, ...props}) => <ul className="list-disc pl-6 my-2 space-y-2" {...props} />,
+                li: ({node, ...props}) => <li className="my-1" {...props} />,
+              }}
+            >{summary}</ReactMarkdown>
           </div>
         </ResultCard>
       )}
