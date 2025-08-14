@@ -34,7 +34,7 @@ const prompt = ai.definePrompt({
 
   Explain the following topic in a way that a student can easily understand it. Include examples to illustrate the concept.
 
-  Format your response using Markdown, including headings, bold text for key terms, and lists for key ideas. Use LaTeX for any mathematical equations, wrapping inline math with single dollar signs (e.g., $E=mc^2$) and block math with double dollar signs (e.g., $$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$). For code blocks, use triple backticks with the language specified (e.g., \`\`\`javascript).
+  Format your response using Markdown, including headings, bold text for key terms, and lists for key ideas. Use LaTeX for any mathematical equations, wrapping inline math with single dollar signs inside backticks (e.g., \`$E=mc^2$\`) and block math with double dollar signs inside backticks (e.g., \`$$x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$$\`). For code blocks, use triple backticks with the language specified (e.g., \`\`\`javascript).
 
   Topic: {{{topic}}}`,
 });

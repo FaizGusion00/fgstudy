@@ -57,14 +57,16 @@ function MarkdownRenderer({text}: {text: string}) {
           const inline = !className;
 
           if (typeof children !== 'string') return null;
+          
+          const content = children.trim();
 
-          // Handle block math first
-          if (children.startsWith('$$') && children.endsWith('$$')) {
-            return <BlockMath math={children.slice(2, -2)} />;
+          // Handle block math
+          if (content.startsWith('$$') && content.endsWith('$$')) {
+            return <div className="my-4"><BlockMath math={content.slice(2, -2)} /></div>;
           }
           // Handle inline math
-          if (children.startsWith('$') && children.endsWith('$')) {
-            return <InlineMath math={children.slice(1, -1)} />;
+          if (content.startsWith('$') && content.endsWith('$')) {
+            return <InlineMath math={content.slice(1, -1)} />;
           }
           
           return match ? (
