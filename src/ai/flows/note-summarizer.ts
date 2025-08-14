@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -29,7 +30,7 @@ const prompt = ai.definePrompt({
   name: 'summarizeNotePrompt',
   input: {schema: SummarizeNoteInputSchema},
   output: {schema: SummarizeNoteOutputSchema},
-  prompt: `You are an expert note summarizer. You will take lecture notes as input and return a concise summary in bullet points. Please respond in the same language as the input notes.
+  prompt: `You are an expert academic summarizer for students. Your task is to summarize the provided text professionally and diligently. The summary should be detailed and clear, keeping all the main ideas and important supporting details so that a student can use it for their notes and revision without missing crucial information. Do not over-simplify the content. The goal is to create a summary that is both comprehensive and easy to understand and remember. Structure the output as a list of bullet points. Please respond in the same language as the input notes.
 
 Notes: {{{notes}}}`,
 });
