@@ -21,6 +21,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import {Input} from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const formSchema = z.object({
   topic: z.string().min(3, {
@@ -32,7 +40,9 @@ function MarkdownRenderer({text}: {text: string}) {
   return (
     <ReactMarkdown
       components={{
-        p: ({node, ...props}) => <p className="my-2 leading-relaxed" {...props} />,
+        p: ({node, ...props}) => (
+          <p className="my-2 leading-relaxed" {...props} />
+        ),
         strong: ({node, ...props}) => (
           <strong className="font-semibold" {...props} />
         ),
@@ -57,24 +67,25 @@ function MarkdownRenderer({text}: {text: string}) {
           const inline = !className;
 
           if (typeof children !== 'string') return null;
-          
+
           const content = children.trim();
 
           // Handle block math
           if (content.startsWith('$$') && content.endsWith('$$')) {
-            return <div className="my-4"><BlockMath math={content.slice(2, -2)} /></div>;
+            return (
+              <div className="my-4">
+                <BlockMath math={content.slice(2, -2)} />
+              </div>
+            );
           }
           // Handle inline math
           if (content.startsWith('$') && content.endsWith('$')) {
             return <InlineMath math={content.slice(1, -1)} />;
           }
-          
+
           return match ? (
             <div className="my-4 rounded-md bg-muted p-4 overflow-x-auto">
-              <code
-                {...props}
-                className="text-sm font-code text-foreground"
-              >
+              <code {...props} className="text-sm font-code text-foreground">
                 {children}
               </code>
             </div>
@@ -87,6 +98,12 @@ function MarkdownRenderer({text}: {text: string}) {
             </code>
           );
         },
+        table: ({node, ...props}) => <Table className="my-4" {...props} />,
+        thead: ({node, ...props}) => <TableHeader {...props} />,
+        tbody: ({node, ...props}) => <TableBody {...props} />,
+        tr: ({node, ...props}) => <TableRow {...props} />,
+        th: ({node, ...props}) => <TableHead {...props} />,
+        td: ({node, ...props}) => <TableCell {...props} />,
       }}
     >
       {text}
