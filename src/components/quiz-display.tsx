@@ -97,15 +97,20 @@ export function QuizDisplay({quizData, startTime}: QuizDisplayProps) {
   return (
     <div className="space-y-4">
       {showResults && (
-        <Card>
+        <Card className="bg-muted/50 dark:bg-muted/20 border-none shadow-inner">
             <CardContent className="grid grid-cols-2 gap-4 p-4 text-center">
-              <div>
+              <div className="flex flex-col items-center justify-center space-y-1">
+                <Target className="size-8 text-primary-foreground" />
                 <h3 className="text-sm font-medium text-muted-foreground">Score</h3>
-                <p className="font-bold text-lg"><Target className="inline-block mr-2" />{score} / {quizData.questions.length}</p>
+                <p className="font-bold text-2xl font-headline">
+                  {score}
+                  <span className="text-base font-body text-muted-foreground">/{quizData.questions.length}</span>
+                </p>
               </div>
-              <div>
+              <div className="flex flex-col items-center justify-center space-y-1">
+                <Clock className="size-8 text-primary-foreground" />
                 <h3 className="text-sm font-medium text-muted-foreground">Time Taken</h3>
-                <p className="font-bold text-lg"><Clock className="inline-block mr-2" />{timeTaken}</p>
+                <p className="font-bold text-2xl font-headline">{timeTaken}</p>
               </div>
             </CardContent>
         </Card>

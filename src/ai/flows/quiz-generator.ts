@@ -14,24 +14,33 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateQuizInputSchema = z.object({
-  text: z
-    .string()
-    .describe('The notes or topic to generate the quiz from.'),
+  text: z.string().describe('The notes or topic to generate the quiz from.'),
+  numberOfQuestions: z
+    .number()
+    .min(5)
+    .max(40)
+    .describe('The number of questions to generate.'),
 });
 export type GenerateQuizInput = z.infer<typeof GenerateQuizInputSchema>;
 
 const GenerateQuizOutputSchema = z.object({
-  questions: z.array(
-    z.object({
-      question: z.string().describe('The multiple-choice question.'),
-      options: z.array(z.string()).describe('The possible answers.'),
-      correctAnswer: z.string().describe('The correct answer to the question.'),
-    })
-  ).describe('The generated multiple-choice questions.'),
+  questions: z
+    .array(
+      z.object({
+        question: z.string().describe('The multiple-choice question.'),
+        options: z.array(z.string()).describe('The possible answers.'),
+        correctAnswer: z
+          .string()
+          .describe('The correct answer to the question.'),
+      })
+    )
+    .describe('The generated multiple-choice questions.'),
 });
 export type GenerateQuizOutput = z.infer<typeof GenerateQuizOutputSchema>;
 
-export async function generateQuiz(input: GenerateQuizInput): Promise<GenerateQuizOutput> {
+export async function generateQuiz(
+  input: GenerateQuizInput
+): Promise<GenerateQuizOutput> {
   return generateQuizFlow(input);
 }
 
@@ -39,7 +48,7 @@ const prompt = ai.definePrompt({
   name: 'generateQuizPrompt',
   input: {schema: GenerateQuizInputSchema},
   output: {schema: GenerateQuizOutputSchema},
-  prompt: `You are an expert educator creating a multiple-choice quiz based on the provided text. The quiz should consist of 15 questions. Please respond in the same language as the input text.
+  prompt: `You are an expert educator creating a multiple-choice quiz based on the provided text. The quiz should consist of {{{numberOfQuestions}}} questions. Please respond in the same language as the input text.
 
   The output should be a JSON array of question objects, where each object has the following structure:
   {

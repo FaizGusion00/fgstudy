@@ -18,14 +18,17 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {Slider} from '@/components/ui/slider';
 import {Textarea} from '@/components/ui/textarea';
 
 const formSchema = z.object({
   text: z.string().min(100, {
     message: 'Please enter at least 100 characters to generate a quiz.',
   }),
+  numberOfQuestions: z.number().min(5).max(40),
 });
 
 export function QuizGenerator() {
@@ -39,6 +42,7 @@ export function QuizGenerator() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       text: '',
+      numberOfQuestions: 15,
     },
   });
 
@@ -46,7 +50,10 @@ export function QuizGenerator() {
     setIsLoading(true);
     setQuizData(null);
     try {
-      const result = await generateQuiz({text: values.text});
+      const result = await generateQuiz({
+        text: values.text,
+        numberOfQuestions: values.numberOfQuestions,
+      });
       setQuizData(result);
       setStartTime(Date.now());
     } catch (error) {
@@ -69,6 +76,8 @@ export function QuizGenerator() {
       .join('\n');
   }, [quizData]);
 
+  const numberOfQuestions = form.watch('numberOfQuestions');
+
   return (
     <div className="space-y-6">
       <Form {...form}>
@@ -89,6 +98,28 @@ export function QuizGenerator() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="numberOfQuestions"
+            render={({field}) => (
+              <FormItem>
+                <FormLabel>
+                  Number of Questions:{' '}
+                  <span className="font-bold">{numberOfQuestions}</span>
+                </FormLabel>
+                <FormControl>
+                  <Slider
+                    min={5}
+                    max={40}
+                    step={1}
+                    value={[field.value]}
+                    onValueChange={vals => field.onChange(vals[0])}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button
             type="submit"
             disabled={isLoading}
@@ -103,10 +134,7 @@ export function QuizGenerator() {
       {isLoading && <LoadingSpinner />}
 
       {quizData && startTime && (
-        <ResultCard
-          title="Your Quiz"
-          textToCopy={quizTextForClipboard}
-        >
+        <ResultCard title="Your Quiz" textToCopy={quizTextForClipboard}>
           <div className="min-h-48 max-h-[60vh] overflow-y-auto pr-2">
             <QuizDisplay quizData={quizData} startTime={startTime} />
           </div>
