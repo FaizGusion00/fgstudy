@@ -96,7 +96,7 @@ export function NoteSummarizer() {
 
       {summary && (
         <ResultCard title="Summary" textToCopy={summary}>
-          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline prose-strong:font-bold prose-ul:list-disc prose-ul:pl-5 max-h-[50vh] overflow-y-auto">
+          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline prose-strong:font-bold prose-ul:list-disc prose-ul:pl-5 min-h-48 max-h-[60vh] overflow-y-auto pr-2">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
