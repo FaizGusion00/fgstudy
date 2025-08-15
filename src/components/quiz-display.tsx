@@ -2,7 +2,7 @@
 'use client';
 
 import * as React from 'react';
-import {Check, VenetianMask, X, Clock, Target} from 'lucide-react';
+import {Check, VenetianMask, X} from 'lucide-react';
 
 import type {GenerateQuizOutput} from '@/ai/flows/quiz-generator';
 import {cn} from '@/lib/utils';
@@ -15,19 +15,24 @@ import {
 import {Button} from '@/components/ui/button';
 import {Label} from '@/components/ui/label';
 import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
-import {Card, CardContent} from './ui/card';
 
 interface QuizDisplayProps {
   quizData: GenerateQuizOutput;
-  startTime: number;
+  onCheckAnswers: (answers: Record<number, string>) => void;
+  onRetakeQuiz: () => void;
+  showResults: boolean;
+  selectedAnswers: Record<number, string>;
+  setSelectedAnswers: React.Dispatch<React.SetStateAction<Record<number, string>>>;
 }
 
-export function QuizDisplay({quizData, startTime}: QuizDisplayProps) {
-  const [selectedAnswers, setSelectedAnswers] = React.useState<
-    Record<number, string>
-  >({});
-  const [showResults, setShowResults] = React.useState(false);
-  const [endTime, setEndTime] = React.useState<number | null>(null);
+export function QuizDisplay({
+  quizData,
+  onCheckAnswers,
+  onRetakeQuiz,
+  showResults,
+  selectedAnswers,
+  setSelectedAnswers,
+}: QuizDisplayProps) {
 
   const handleAnswerChange = (questionIndex: number, answer: string) => {
     setSelectedAnswers(prev => ({
@@ -37,14 +42,7 @@ export function QuizDisplay({quizData, startTime}: QuizDisplayProps) {
   };
 
   const handleCheckAnswers = () => {
-    setEndTime(Date.now());
-    setShowResults(true);
-  };
-
-  const handleRetakeQuiz = () => {
-    setSelectedAnswers({});
-    setShowResults(false);
-    setEndTime(null);
+    onCheckAnswers(selectedAnswers);
   };
 
   const getOptionClass = (
@@ -76,23 +74,6 @@ export function QuizDisplay({quizData, startTime}: QuizDisplayProps) {
 
   const allQuestionsAnswered =
     Object.keys(selectedAnswers).length === quizData.questions.length;
-  
-  const score = React.useMemo(() => {
-    if (!showResults) return 0;
-    return quizData.questions.reduce((acc, q, i) => {
-      return selectedAnswers[i] === q.correctAnswer ? acc + 1 : acc;
-    }, 0);
-  }, [showResults, quizData, selectedAnswers]);
-
-  const timeTaken = React.useMemo(() => {
-    if (!endTime) return '0s';
-    const seconds = Math.floor((endTime - startTime) / 1000);
-    if (seconds < 60) return `${seconds}s`;
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}m ${remainingSeconds}s`;
-  }, [endTime, startTime]);
-
 
   return (
     <div className="space-y-6">
@@ -132,33 +113,13 @@ export function QuizDisplay({quizData, startTime}: QuizDisplayProps) {
       </Accordion>
       
       <Button
-        onClick={showResults ? handleRetakeQuiz : handleCheckAnswers}
+        onClick={showResults ? onRetakeQuiz : handleCheckAnswers}
         disabled={!showResults && !allQuestionsAnswered}
         className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
       >
         <VenetianMask className="mr-2" />
         {showResults ? 'Retake Quiz' : 'Check Answers'}
       </Button>
-
-      {showResults && (
-        <Card className="bg-muted/50 dark:bg-muted/20 border-none shadow-inner data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95">
-            <CardContent className="grid grid-cols-2 gap-4 p-4 text-center">
-              <div className="flex flex-col items-center justify-center space-y-1">
-                <Target className="size-8 text-primary-foreground" />
-                <h3 className="text-sm font-medium text-muted-foreground">Score</h3>
-                <p className="font-bold text-2xl font-headline">
-                  {score}
-                  <span className="text-base font-body text-muted-foreground">/{quizData.questions.length}</span>
-                </p>
-              </div>
-              <div className="flex flex-col items-center justify-center space-y-1">
-                <Clock className="size-8 text-primary-foreground" />
-                <h3 className="text-sm font-medium text-muted-foreground">Time Taken</h3>
-                <p className="font-bold text-2xl font-headline">{timeTaken}</p>
-              </div>
-            </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
