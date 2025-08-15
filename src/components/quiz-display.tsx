@@ -95,27 +95,7 @@ export function QuizDisplay({quizData, startTime}: QuizDisplayProps) {
 
 
   return (
-    <div className="space-y-4">
-      {showResults && (
-        <Card className="bg-muted/50 dark:bg-muted/20 border-none shadow-inner">
-            <CardContent className="grid grid-cols-2 gap-4 p-4 text-center">
-              <div className="flex flex-col items-center justify-center space-y-1">
-                <Target className="size-8 text-primary-foreground" />
-                <h3 className="text-sm font-medium text-muted-foreground">Score</h3>
-                <p className="font-bold text-2xl font-headline">
-                  {score}
-                  <span className="text-base font-body text-muted-foreground">/{quizData.questions.length}</span>
-                </p>
-              </div>
-              <div className="flex flex-col items-center justify-center space-y-1">
-                <Clock className="size-8 text-primary-foreground" />
-                <h3 className="text-sm font-medium text-muted-foreground">Time Taken</h3>
-                <p className="font-bold text-2xl font-headline">{timeTaken}</p>
-              </div>
-            </CardContent>
-        </Card>
-      )}
-
+    <div className="space-y-6">
       <Accordion type="single" collapsible className="w-full" defaultValue={showResults ? undefined : "item-0"}>
         {quizData.questions.map((q, i) => (
           <AccordionItem value={`item-${i}`} key={i}>
@@ -150,6 +130,7 @@ export function QuizDisplay({quizData, startTime}: QuizDisplayProps) {
           </AccordionItem>
         ))}
       </Accordion>
+      
       <Button
         onClick={showResults ? handleRetakeQuiz : handleCheckAnswers}
         disabled={!showResults && !allQuestionsAnswered}
@@ -158,6 +139,26 @@ export function QuizDisplay({quizData, startTime}: QuizDisplayProps) {
         <VenetianMask className="mr-2" />
         {showResults ? 'Retake Quiz' : 'Check Answers'}
       </Button>
+
+      {showResults && (
+        <Card className="bg-muted/50 dark:bg-muted/20 border-none shadow-inner data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95">
+            <CardContent className="grid grid-cols-2 gap-4 p-4 text-center">
+              <div className="flex flex-col items-center justify-center space-y-1">
+                <Target className="size-8 text-primary-foreground" />
+                <h3 className="text-sm font-medium text-muted-foreground">Score</h3>
+                <p className="font-bold text-2xl font-headline">
+                  {score}
+                  <span className="text-base font-body text-muted-foreground">/{quizData.questions.length}</span>
+                </p>
+              </div>
+              <div className="flex flex-col items-center justify-center space-y-1">
+                <Clock className="size-8 text-primary-foreground" />
+                <h3 className="text-sm font-medium text-muted-foreground">Time Taken</h3>
+                <p className="font-bold text-2xl font-headline">{timeTaken}</p>
+              </div>
+            </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
