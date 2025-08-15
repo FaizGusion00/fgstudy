@@ -22,7 +22,9 @@ interface QuizDisplayProps {
   onRetakeQuiz: () => void;
   showResults: boolean;
   selectedAnswers: Record<number, string>;
-  setSelectedAnswers: React.Dispatch<React.SetStateAction<Record<number, string>>>;
+  setSelectedAnswers: React.Dispatch<
+    React.SetStateAction<Record<number, string>>
+  >;
 }
 
 export function QuizDisplay({
@@ -33,7 +35,6 @@ export function QuizDisplay({
   selectedAnswers,
   setSelectedAnswers,
 }: QuizDisplayProps) {
-
   const handleAnswerChange = (questionIndex: number, answer: string) => {
     setSelectedAnswers(prev => ({
       ...prev,
@@ -52,7 +53,8 @@ export function QuizDisplay({
   ) => {
     if (!showResults) return '';
     const selected = selectedAnswers[questionIndex];
-    if (option === correctAnswer) return 'bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700';
+    if (option === correctAnswer)
+      return 'bg-green-100 border-green-300 dark:bg-green-900/30 dark:border-green-700';
     if (option === selected && option !== correctAnswer)
       return 'bg-red-100 border-red-300 dark:bg-red-900/30 dark:border-red-700';
     return '';
@@ -77,7 +79,12 @@ export function QuizDisplay({
 
   return (
     <div className="space-y-6">
-      <Accordion type="single" collapsible className="w-full" defaultValue={showResults ? undefined : "item-0"}>
+      <Accordion
+        type="single"
+        collapsible
+        className="w-full"
+        defaultValue={showResults ? undefined : 'item-0'}
+      >
         {quizData.questions.map((q, i) => (
           <AccordionItem value={`item-${i}`} key={i}>
             <AccordionTrigger className="font-headline text-left">
@@ -111,7 +118,7 @@ export function QuizDisplay({
           </AccordionItem>
         ))}
       </Accordion>
-      
+
       <Button
         onClick={showResults ? onRetakeQuiz : handleCheckAnswers}
         disabled={!showResults && !allQuestionsAnswered}
