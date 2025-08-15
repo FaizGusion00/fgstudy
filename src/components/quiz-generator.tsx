@@ -107,7 +107,9 @@ export function QuizGenerator() {
           title="Your Quiz"
           textToCopy={quizTextForClipboard}
         >
-          <QuizDisplay quizData={quizData} startTime={startTime} />
+          <div className="max-h-[50vh] overflow-y-auto pr-2">
+            <QuizDisplay quizData={quizData} startTime={startTime} />
+          </div>
         </ResultCard>
       )}
     </div>

@@ -173,7 +173,7 @@ export function TopicExplainer() {
 
       {explanation && (
         <ResultCard title="Explanation" textToCopy={explanation}>
-          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground">
+          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground max-h-[50vh] overflow-y-auto pr-2">
             <MarkdownRenderer text={explanation} />
           </div>
         </ResultCard>

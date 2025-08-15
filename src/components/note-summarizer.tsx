@@ -7,6 +7,7 @@ import {Wand2} from 'lucide-react';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 import {summarizeNote} from '@/ai/flows/note-summarizer';
 import {LoadingSpinner} from '@/components/loading-spinner';
@@ -20,6 +21,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import {Textarea} from '@/components/ui/textarea';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './ui/table';
 
 const formSchema = z.object({
   notes: z.string().min(50, {
@@ -87,15 +96,35 @@ export function NoteSummarizer() {
 
       {summary && (
         <ResultCard title="Summary" textToCopy={summary}>
-          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline prose-strong:font-bold prose-ul:list-disc prose-ul:pl-5">
+          <div className="prose prose-sm dark:prose-invert max-w-none text-foreground prose-p:my-2 prose-headings:font-headline prose-strong:font-bold prose-ul:list-disc prose-ul:pl-5 max-h-[50vh] overflow-y-auto">
             <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
               components={{
-                p: ({node, ...props}) => <p className="my-2 leading-relaxed" {...props} />,
-                strong: ({node, ...props}) => <strong className="font-semibold" {...props} />,
-                ul: ({node, ...props}) => <ul className="list-disc pl-6 my-2 space-y-2" {...props} />,
+                p: ({node, ...props}) => (
+                  <p className="my-2 leading-relaxed" {...props} />
+                ),
+                strong: ({node, ...props}) => (
+                  <strong className="font-semibold" {...props} />
+                ),
+                ul: ({node, ...props}) => (
+                  <ul
+                    className="list-disc pl-6 my-2 space-y-2"
+                    {...props}
+                  />
+                ),
                 li: ({node, ...props}) => <li className="my-1" {...props} />,
+                table: ({node, ...props}) => (
+                  <Table className="my-4" {...props} />
+                ),
+                thead: ({node, ...props}) => <TableHeader {...props} />,
+                tbody: ({node, ...props}) => <TableBody {...props} />,
+                tr: ({node, ...props}) => <TableRow {...props} />,
+                th: ({node, ...props}) => <TableHead {...props} />,
+                td: ({node, ...props}) => <TableCell {...props} />,
               }}
-            >{summary}</ReactMarkdown>
+            >
+              {summary}
+            </ReactMarkdown>
           </div>
         </ResultCard>
       )}
